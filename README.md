@@ -59,7 +59,10 @@ curl -X GET http://localhost:8888/deploy
 ## Comandos e configuração
 
 ### Pré-Requisitos
-- Gradle 6.0
+```cmd
+docker --version
+Docker version 20.10.9, build c2ea9bc
+``
 
 ##### Rodar teste unitário
 
@@ -70,7 +73,6 @@ curl -X GET http://localhost:8888/deploy
 ##### Executar com Docker
 
 ```cmd
- ./gradlew build -x test
 docker build -t customer-api-application .
 docker run -p 8888:8888 customer-api-application
 ```

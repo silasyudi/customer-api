@@ -1,4 +1,5 @@
 FROM openjdk:11.0.5-jdk-slim
-COPY build/libs/customer-api-application.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY . .
+RUN /gradlew build
+ENTRYPOINT ["java","-jar","/build/libs/customer-api-application.jar"]
 EXPOSE 8888
