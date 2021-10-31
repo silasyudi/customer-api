@@ -1,0 +1,84 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:2.2.0.RELEASE')
+        classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.22.1')
+        classpath('com.github.ksoichiro:gradle-console-reporter:0.6.2')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.palantir.docker'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.ksoichiro.console.reporter'
+
+repositories {
+    mavenCentral()
+    maven { url "https://nexus.geomatys.com/repository/geotoolkit/" }
+}
+
+sourceCompatibility = 11
+targetCompatibility = 11
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web:2.2.1.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter-data-jpa:2.5.6")
+    compile("com.google.code.gson:gson:2.8.6")
+    runtime("com.h2database:h2:1.4.200")
+    testCompile("org.springframework.boot:spring-boot-starter-test:2.2.1.RELEASE") {
+        exclude group: 'junit:junit'
+    }
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    testCompile("org.mockito:mockito-core:2.1.0")
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled false
+        csv.enabled false
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.7
+            }
+        }
+    }
+}
+
+consoleReporter {
+    jacoco {
+        enabled true
+        onlyWhenCoverageTaskExecuted true
+        reportAfterBuildFinished true
+        failIfLessThanThresholdError false
+        autoconfigureCoverageConfig true
+        coverageTaskName 'jacocoTestReport'
+        reportFile
+        thresholdFine 90
+        thresholdWarning 70
+        thresholdError 0
+        brokenCoverageErrorMessage "Coverage has fallen below the threshold in some projects."
+        colorEnabled true
+    }
+}
