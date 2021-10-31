@@ -62,7 +62,7 @@ curl -X GET http://localhost:8888/deploy
 ```cmd
 docker --version
 Docker version 20.10.9, build c2ea9bc
-``
+``` 
 
 ##### Rodar teste unitário
 
